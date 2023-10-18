@@ -10,7 +10,9 @@ function UsersList() {
   return (
     <div className={styles.usersList}>
       <div className={styles.usersListHeader}>
-        <Typography variant="h6">Users List</Typography>
+        <Typography variant="h6">
+          Users List <Typography variant="span">({usersData.length})</Typography>
+        </Typography>
         <AddButton />
       </div>
       <div className={styles.usersListContent}>
