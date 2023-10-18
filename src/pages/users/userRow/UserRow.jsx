@@ -10,7 +10,11 @@ const UserRow = ({ user }) => {
   return (
     <Grid container className={styles.userRow}>
       {/* Render each user row inputs and trash icon at the end of each row */}
-      {/* <TrashIconButton /> */}
+      <InputField name="name" value={user.name} placeholder="User Name" />
+      <InputField name="country" value={user.country} placeholder="Country" />
+      <InputField name="email" value={user.email} placeholder="Email" />
+      <InputField name="phone" value={user.phone} placeholder="Phone Number" />
+      <TrashIconButton />
     </Grid>
   );
 };
