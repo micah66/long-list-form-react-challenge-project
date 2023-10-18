@@ -43,7 +43,8 @@
 
 .userRow {
   margin-block: 1px 6px;
-  flex-wrap: nowrap;
+  gap: 8px;
+  flex-wrap: nowrap !important;
   justify-content: space-between;
   align-items: center;
 }
