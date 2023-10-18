@@ -8,13 +8,23 @@ import countryOptions from '../../../data/countries.json';
 
 const UserRow = ({ user }) => {
   return (
-    <Grid container className={styles.userRow}>
+    <Grid container className={styles.userRow} columnGap={1}>
       {/* Render each user row inputs and trash icon at the end of each row */}
-      <InputField name="name" value={user.name} placeholder="User Name" />
-      <InputField name="country" value={user.country} placeholder="Country" />
-      <InputField name="email" value={user.email} placeholder="Email" />
-      <InputField name="phone" value={user.phone} placeholder="Phone Number" />
-      <TrashIconButton />
+      <Grid item xs>
+        <InputField name="name" value={user.name} placeholder="User Name" />
+      </Grid>
+      <Grid item xs>
+        <InputField name="country" value={user.country} placeholder="Country" />
+      </Grid>
+      <Grid item xs>
+        <InputField name="email" value={user.email} placeholder="Email" />
+      </Grid>
+      <Grid item xs>
+        <InputField name="phone" value={user.phone} placeholder="Phone Number" />
+      </Grid>
+      <Grid item xs="auto">
+        <TrashIconButton />
+      </Grid>
     </Grid>
   );
 };
