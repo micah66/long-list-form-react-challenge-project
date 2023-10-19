@@ -9,6 +9,8 @@ import countryOptions from '../../../data/countries.json';
 
 const USER_ACTIONS = {
   EDIT_FIELD: 'editTextField',
+  VALIDATE_FIELD: 'validateField',
+  BLUR_FIELD: 'blurField',
 };
 
 function reducer(state, action) {
@@ -16,7 +18,32 @@ function reducer(state, action) {
     case USER_ACTIONS.EDIT_FIELD: {
       return {
         ...state,
-        [action.payload.fieldName]: action.payload.inputValue,
+        user: {
+          ...state.user,
+          [action.payload.fieldName]: action.payload.inputValue,
+        },
+      };
+    }
+    case USER_ACTIONS.VALIDATE_FIELD: {
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
+          [action.payload.fieldName]: action.payload.isInvalid,
+        },
+        emptyFields: {
+          ...state.emptyFields,
+          [action.payload.fieldName]: false,
+        },
+      };
+    }
+    case USER_ACTIONS.BLUR_FIELD: {
+      return {
+        ...state,
+        emptyFields: {
+          ...state.emptyFields,
+          [action.payload.fieldName]: action.payload.isEmpty,
+        },
       };
     }
     default: {
@@ -26,13 +53,28 @@ function reducer(state, action) {
 }
 
 const UserRow = ({ user, handleDeleteUser = () => {} }) => {
-  const [state, dispatch] = useReducer(reducer, user);
-
-  const editTextField = (fieldName, inputValue) =>
+  const [state, dispatch] = useReducer(reducer, { user, errors: {}, emptyFields: {} });
+  console.log(state);
+  const editTextField = (fieldName, inputValue, validator) => {
     dispatch({
       type: USER_ACTIONS.EDIT_FIELD,
       payload: { fieldName, inputValue },
     });
+
+    if (validator) {
+      dispatch({
+        type: USER_ACTIONS.VALIDATE_FIELD,
+        payload: { fieldName, isInvalid: !!inputValue && validator(inputValue) },
+      });
+    }
+  };
+
+  const checkEmptyField = (fieldName, inputValue) => {
+    dispatch({
+      type: USER_ACTIONS.BLUR_FIELD,
+      payload: { fieldName, isEmpty: !inputValue },
+    });
+  };
 
   return (
     <Grid container className={styles.userRow} columnGap={1}>
@@ -40,33 +82,53 @@ const UserRow = ({ user, handleDeleteUser = () => {} }) => {
       <Grid item xs>
         <InputField
           name="name"
-          value={state.name}
+          value={state.user.name}
           placeholder="User Name"
-          onChangehandler={editTextField}
+          handleChange={(fieldName, inputValue) => {
+            editTextField(fieldName, inputValue, () => /[^a-z\s]/gi.test(inputValue));
+          }}
+          handleBlur={checkEmptyField}
+          error={state.errors.name || state.emptyFields.name}
         />
       </Grid>
       <Grid item xs>
         <InputField
           name="country"
-          value={state.country}
+          value={state.user.country}
           placeholder="Country"
-          onChangehandler={editTextField}
+          handleChange={editTextField}
         />
       </Grid>
       <Grid item xs>
         <InputField
           name="email"
-          value={state.email}
+          value={state.user.email}
           placeholder="Email"
-          onChangehandler={editTextField}
+          handleChange={(fieldName, inputValue) =>
+            editTextField(
+              fieldName,
+              inputValue,
+              () => !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(inputValue)
+            )
+          }
+          handleBlur={checkEmptyField}
+          error={state.errors.email || state.emptyFields.email}
         />
       </Grid>
       <Grid item xs>
         <InputField
           name="phone"
-          value={state.phone}
+          value={state.user.phone}
           placeholder="Phone Number"
-          onChangehandler={editTextField}
+          handleChange={(fieldName, inputValue) =>
+            editTextField(
+              fieldName,
+              inputValue,
+              () => !/^\+{1,1}\d{7,12}$/g.test(inputValue)
+            )
+          }
+          handleBlur={checkEmptyField}
+          error={state.errors.phone || state.emptyFields.phone}
         />
       </Grid>
       <Grid item xs="auto">

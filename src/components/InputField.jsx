@@ -8,12 +8,21 @@ const StyledTextField = styled(TextField)({
   borderRadius: '4px',
 });
 
-const InputField = ({ name, value, onChangehandler, error, disabled, placeholder }) => {
+const InputField = ({
+  name,
+  value,
+  handleChange,
+  handleBlur,
+  error,
+  disabled,
+  placeholder,
+}) => {
   return (
     <StyledTextField
       name={name}
       value={value}
-      onChange={(e) => onChangehandler(e.target.name, e.target.value)}
+      onChange={(e) => handleChange(e.target.name, e.target.value)}
+      onBlur={(e) => handleBlur(e.target.name, e.target.value)}
       error={error}
       disabled={disabled}
       placeholder={placeholder}
@@ -32,7 +41,8 @@ const InputField = ({ name, value, onChangehandler, error, disabled, placeholder
 InputField.defaultProps = {
   name: 'text_field_name',
   value: '',
-  onChangehandler: () => {},
+  handleChange: () => {},
+  handleBlur: () => {},
   error: false,
   disabled: false,
   placeholder: '',
