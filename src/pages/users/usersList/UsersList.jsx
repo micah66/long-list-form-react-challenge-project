@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Button, Typography } from '@mui/material';
 import { useUsersContext } from '../../../context/usersContext';
 import UserRow from '../userRow/UserRow';
@@ -13,7 +14,11 @@ function UsersList() {
         <Typography variant="h6">
           Users List <Typography variant="span">({usersData.length})</Typography>
         </Typography>
-        <AddButton />
+        <AddButton
+          handleClick={() =>
+            setUsersData((prevUsersList) => [{ id: uuidv4() }, ...prevUsersList])
+          }
+        />
       </div>
       <div className={styles.usersListContent}>
         {usersData.map((user) => (
