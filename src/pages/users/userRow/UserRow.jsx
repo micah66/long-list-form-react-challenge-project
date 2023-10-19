@@ -6,74 +6,16 @@ import styles from '../users.module.css';
 
 // user country must be one of those - for select/autocomplete implementation
 import countryOptions from '../../../data/countries.json';
+import { useUsersContext } from '../../../context/usersContext';
 
-const USER_ACTIONS = {
-  EDIT_FIELD: 'editTextField',
-  VALIDATE_FIELD: 'validateField',
-  BLUR_FIELD: 'blurField',
-};
+const UserRow = ({ user, handleEditUser, handleDeleteUser = () => {}, errors }) => {
+  const editTextField = (fieldName, inputValue) => {
+    const updatedUser = {
+      ...user,
+      [fieldName]: inputValue,
+    };
 
-function reducer(state, action) {
-  switch (action.type) {
-    case USER_ACTIONS.EDIT_FIELD: {
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          [action.payload.fieldName]: action.payload.inputValue,
-        },
-      };
-    }
-    case USER_ACTIONS.VALIDATE_FIELD: {
-      return {
-        ...state,
-        errors: {
-          ...state.errors,
-          [action.payload.fieldName]: action.payload.isInvalid,
-        },
-        emptyFields: {
-          ...state.emptyFields,
-          [action.payload.fieldName]: false,
-        },
-      };
-    }
-    case USER_ACTIONS.BLUR_FIELD: {
-      return {
-        ...state,
-        emptyFields: {
-          ...state.emptyFields,
-          [action.payload.fieldName]: action.payload.isEmpty,
-        },
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-}
-
-const UserRow = ({ user, handleDeleteUser = () => {} }) => {
-  const [state, dispatch] = useReducer(reducer, { user, errors: {}, emptyFields: {} });
-  console.log(state);
-  const editTextField = (fieldName, inputValue, validator) => {
-    dispatch({
-      type: USER_ACTIONS.EDIT_FIELD,
-      payload: { fieldName, inputValue },
-    });
-
-    if (validator) {
-      dispatch({
-        type: USER_ACTIONS.VALIDATE_FIELD,
-        payload: { fieldName, isInvalid: !!inputValue && validator(inputValue) },
-      });
-    }
-  };
-
-  const checkEmptyField = (fieldName, inputValue) => {
-    dispatch({
-      type: USER_ACTIONS.BLUR_FIELD,
-      payload: { fieldName, isEmpty: !inputValue },
-    });
+    handleEditUser(updatedUser);
   };
 
   return (
@@ -82,19 +24,19 @@ const UserRow = ({ user, handleDeleteUser = () => {} }) => {
       <Grid item xs>
         <InputField
           name="name"
-          value={state.user.name}
+          value={user.name}
           placeholder="User Name"
-          handleChange={(fieldName, inputValue) => {
-            editTextField(fieldName, inputValue, () => /[^a-z\s]/gi.test(inputValue));
+          handleChange={editTextField}
+          handleBlur={() => {
+            if (!user.name) editTextField('name', '');
           }}
-          handleBlur={checkEmptyField}
-          error={state.errors.name || state.emptyFields.name}
+          error={errors?.name && errors.name !== 'ok'}
         />
       </Grid>
       <Grid item xs>
         <InputField
           name="country"
-          value={state.user.country}
+          value={user.country}
           placeholder="Country"
           handleChange={editTextField}
         />
@@ -102,33 +44,25 @@ const UserRow = ({ user, handleDeleteUser = () => {} }) => {
       <Grid item xs>
         <InputField
           name="email"
-          value={state.user.email}
+          value={user.email}
           placeholder="Email"
-          handleChange={(fieldName, inputValue) =>
-            editTextField(
-              fieldName,
-              inputValue,
-              () => !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(inputValue)
-            )
-          }
-          handleBlur={checkEmptyField}
-          error={state.errors.email || state.emptyFields.email}
+          handleChange={editTextField}
+          handleBlur={() => {
+            if (!user.email) editTextField('email', '');
+          }}
+          error={errors?.email && errors.email !== 'ok'}
         />
       </Grid>
       <Grid item xs>
         <InputField
           name="phone"
-          value={state.user.phone}
+          value={user.phone}
           placeholder="Phone Number"
-          handleChange={(fieldName, inputValue) =>
-            editTextField(
-              fieldName,
-              inputValue,
-              () => !/^\+{1,1}\d{7,12}$/g.test(inputValue)
-            )
-          }
-          handleBlur={checkEmptyField}
-          error={state.errors.phone || state.emptyFields.phone}
+          handleChange={editTextField}
+          handleBlur={() => {
+            if (!user.phone) editTextField('phone', '');
+          }}
+          error={errors?.phone && errors.phone !== 'ok'}
         />
       </Grid>
       <Grid item xs="auto">
