@@ -5,7 +5,7 @@ import AddButton from '../../../components/AddButton';
 import styles from '../users.module.css';
 
 function UsersList() {
-  const { usersData } = useUsersContext();
+  const { usersData, setUsersData } = useUsersContext();
 
   return (
     <div className={styles.usersList}>
@@ -17,7 +17,15 @@ function UsersList() {
       </div>
       <div className={styles.usersListContent}>
         {usersData.map((user) => (
-          <UserRow key={user.id} user={user} />
+          <UserRow
+            key={user.id}
+            user={user}
+            handleDeleteUser={() => {
+              setUsersData((prevUsersList) =>
+                prevUsersList.filter(({ id }) => user.id !== id)
+              );
+            }}
+          />
         ))}
       </div>
     </div>

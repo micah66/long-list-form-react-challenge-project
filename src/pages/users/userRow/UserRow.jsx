@@ -25,7 +25,7 @@ function reducer(state, action) {
   }
 }
 
-const UserRow = ({ user }) => {
+const UserRow = ({ user, handleDeleteUser = () => {} }) => {
   const [state, dispatch] = useReducer(reducer, user);
 
   const editTextField = (fieldName, inputValue) =>
@@ -70,7 +70,7 @@ const UserRow = ({ user }) => {
         />
       </Grid>
       <Grid item xs="auto">
-        <TrashIconButton />
+        <TrashIconButton handleClick={handleDeleteUser} />
       </Grid>
     </Grid>
   );
