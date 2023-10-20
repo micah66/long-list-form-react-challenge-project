@@ -69,9 +69,16 @@ export const ContextProvider = ({ children }) => {
     [errors]
   );
 
-  const deleteUser = (user) => {
-    setUsersData((prevUsersList) => prevUsersList.filter(({ id }) => user.id !== id));
-  };
+  const deleteUser = useCallback(
+    (user) => {
+      setUsersData((prevUsersList) => prevUsersList.filter(({ id }) => user.id !== id));
+
+      errors[user.id] = {};
+
+      setErrors({ ...errors });
+    },
+    [errors]
+  );
 
   console.log('usersData', usersData);
 
@@ -87,7 +94,7 @@ export const ContextProvider = ({ children }) => {
 
   const contextValue = useMemo(
     () => ({ usersData, errors, addUser, editUser, deleteUser }),
-    [usersData, errors, editUser]
+    [usersData, errors, editUser, deleteUser]
   );
 
   return <UsersContext.Provider value={contextValue}>{children}</UsersContext.Provider>;
