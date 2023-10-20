@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import data from '../data/initialUsersData.json';
+import { useLocalStorage } from '../utils/useStorage';
 
 // initial value
 const UsersContext = createContext({
@@ -35,6 +36,10 @@ const validatePhone = (phone) => {
 
 // value provider
 export const ContextProvider = ({ children }) => {
+  const [persistedData, setPersistedData] = useLocalStorage({
+    key: 'usersData',
+    initValue: data,
+  });
   const [usersData, setUsersData] = useState([]);
   const [errors, setErrors] = useState(
     usersData.reduce((acc, user) => {
@@ -80,11 +85,15 @@ export const ContextProvider = ({ children }) => {
     [errors]
   );
 
+  const saveUsers = useCallback(() => {
+    setPersistedData(usersData);
+  }, [setPersistedData, usersData]);
+
   console.log('usersData', usersData);
 
   useEffect(() => {
     const t = setTimeout(() => {
-      setUsersData(data);
+      setUsersData(persistedData);
     }, 2000);
 
     return () => {
@@ -93,8 +102,8 @@ export const ContextProvider = ({ children }) => {
   }, []);
 
   const contextValue = useMemo(
-    () => ({ usersData, errors, addUser, editUser, deleteUser }),
-    [usersData, errors, editUser, deleteUser]
+    () => ({ usersData, errors, addUser, editUser, deleteUser, saveUsers }),
+    [usersData, errors, editUser, deleteUser, saveUsers]
   );
 
   return <UsersContext.Provider value={contextValue}>{children}</UsersContext.Provider>;

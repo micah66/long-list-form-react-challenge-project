@@ -5,7 +5,7 @@ import ErrorMessage from '../../components/ErrorMessage';
 import { useUsersContext } from '../../context/usersContext';
 
 function UsersPage() {
-  const { errors } = useUsersContext();
+  const { errors, saveUsers } = useUsersContext();
   const fieldStatuses = Object.values(errors)
     .flatMap((users) => Object.values(users))
     .reduce(
@@ -32,7 +32,7 @@ function UsersPage() {
         <div className={styles.rightButtonContainer}>
           <PrimaryButton
             disabled={Boolean(fieldStatuses.empty + fieldStatuses.invalid)}
-            // TODO: Implement onClick handler
+            handleClick={saveUsers}
           >
             Save
           </PrimaryButton>
