@@ -16,6 +16,7 @@ const InputField = ({
   error,
   disabled,
   placeholder,
+  ...restProps
 }) => {
   return (
     <StyledTextField
@@ -33,6 +34,7 @@ const InputField = ({
       inputProps={{
         autoComplete: 'off',
       }}
+      {...restProps}
     />
   );
 };

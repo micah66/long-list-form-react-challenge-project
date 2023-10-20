@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import { Grid } from '@mui/material';
+import { Autocomplete, Grid } from '@mui/material';
 import InputField from '../../../components/InputField';
 import TrashIconButton from '../../../components/TrashIconButton';
 import styles from '../users.module.css';
@@ -34,11 +34,19 @@ const UserRow = ({ user, handleEditUser, handleDeleteUser = () => {}, errors }) 
         />
       </Grid>
       <Grid item xs>
-        <InputField
-          name="country"
+        <Autocomplete
+          options={countryOptions}
+          disableClearable
+          onChange={(e) => {
+            editTextField('country', e.target.innerText);
+          }}
           value={user.country}
-          placeholder="Country"
-          handleChange={editTextField}
+          renderInput={(params) => (
+            <InputField {...params} name="country" placeholder="Country" />
+          )}
+          sx={{
+            '.MuiOutlinedInput-root': { height: '40px', padding: 0, paddingLeft: '8px' },
+          }}
         />
       </Grid>
       <Grid item xs>
