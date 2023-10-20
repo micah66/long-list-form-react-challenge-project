@@ -92,18 +92,20 @@ export const ContextProvider = ({ children }) => {
   console.log('usersData', usersData);
 
   useEffect(() => {
+    setLoading(true);
     const t = setTimeout(() => {
       setUsersData(persistedData);
+      setLoading(false);
     }, 2000);
-
     return () => {
+      setLoading(false);
       clearTimeout(t);
     };
-  }, []);
+  }, [persistedData]);
 
   const contextValue = useMemo(
-    () => ({ usersData, errors, addUser, editUser, deleteUser, saveUsers }),
-    [usersData, errors, editUser, deleteUser, saveUsers]
+    () => ({ usersData, errors, addUser, editUser, deleteUser, saveUsers, loading }),
+    [usersData, errors, editUser, deleteUser, saveUsers, loading]
   );
 
   return <UsersContext.Provider value={contextValue}>{children}</UsersContext.Provider>;

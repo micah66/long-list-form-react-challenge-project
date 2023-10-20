@@ -5,7 +5,7 @@ import AddButton from '../../../components/AddButton';
 import styles from '../users.module.css';
 
 function UsersList() {
-  const { usersData, errors, addUser, editUser, deleteUser } = useUsersContext();
+  const { usersData, errors, addUser, editUser, deleteUser, loading } = useUsersContext();
 
   return (
     <div className={styles.usersList}>
@@ -16,15 +16,19 @@ function UsersList() {
         <AddButton handleClick={addUser} />
       </div>
       <div className={styles.usersListContent}>
-        {usersData.map((user) => (
-          <UserRow
-            key={user.id}
-            user={user}
-            handleEditUser={editUser}
-            errors={errors[user.id]}
-            handleDeleteUser={() => deleteUser(user)}
-          />
-        ))}
+        {loading ? (
+          <div> Loading...</div>
+        ) : (
+          usersData.map((user) => (
+            <UserRow
+              key={user.id}
+              user={user}
+              handleEditUser={editUser}
+              errors={errors[user.id]}
+              handleDeleteUser={() => deleteUser(user)}
+            />
+          ))
+        )}
       </div>
     </div>
   );
