@@ -31,7 +31,7 @@ function UsersPage() {
         )}
         <div className={styles.rightButtonContainer}>
           <PrimaryButton
-            disabled={false}
+            disabled={Boolean(fieldStatuses.empty + fieldStatuses.invalid)}
             // TODO: Implement onClick handler
           >
             Save
