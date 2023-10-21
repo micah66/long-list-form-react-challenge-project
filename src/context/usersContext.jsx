@@ -79,7 +79,15 @@ export const ContextProvider = ({ children }) => {
   }, [persistedData]);
 
   const contextValue = useMemo(
-    () => ({ usersData, errors, addUser, editUser, deleteUser, saveUsers, loading }),
+    () => ({
+      usersData,
+      errors,
+      addUser,
+      editUser,
+      deleteUser,
+      saveUsers,
+      loading,
+    }),
     [usersData, errors, editUser, deleteUser, saveUsers, loading]
   );
 
