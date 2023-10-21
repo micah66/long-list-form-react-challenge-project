@@ -1,4 +1,5 @@
-import { useReducer } from 'react';
+import { memo } from 'react';
+import _ from 'lodash';
 import { Autocomplete, Grid } from '@mui/material';
 import InputField from '../../../components/InputField';
 import TrashIconButton from '../../../components/TrashIconButton';
@@ -6,7 +7,24 @@ import styles from '../users.module.css';
 
 // user country must be one of those - for select/autocomplete implementation
 import countryOptions from '../../../data/countries.json';
-import { useUsersContext } from '../../../context/usersContext';
+
+const validateFieldOfType = {
+  name: (name) => {
+    if (name === '') return 'empty';
+    if (!name) return 'ok';
+    return /[^a-z\s]/gi.test(name) ? 'invalid' : 'ok';
+  },
+  email: (email) => {
+    if (email === '') return 'empty';
+    if (!email) return 'ok';
+    return /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email || '') ? 'ok' : 'invalid';
+  },
+  phone: (phone) => {
+    if (phone === '') return 'empty';
+    if (!phone) return 'ok';
+    return /^\+{1,1}\d{7,}$/g.test(phone || '') ? 'ok' : 'invalid';
+  },
+};
 
 const UserRow = ({ user, handleEditUser, handleDeleteUser = () => {}, errors }) => {
   const editTextField = (fieldName, inputValue) => {
@@ -15,7 +33,7 @@ const UserRow = ({ user, handleEditUser, handleDeleteUser = () => {}, errors }) 
       [fieldName]: inputValue,
     };
 
-    handleEditUser(updatedUser);
+    handleEditUser(updatedUser, fieldName, validateFieldOfType[fieldName]?.(inputValue));
   };
 
   return (
@@ -80,4 +98,8 @@ const UserRow = ({ user, handleEditUser, handleDeleteUser = () => {}, errors }) 
   );
 };
 
-export default UserRow;
+export default memo(UserRow, (oldProps, newProps) =>
+  _.isEqual(oldProps.user, newProps.user)
+);
+
+// export default UserRow;
