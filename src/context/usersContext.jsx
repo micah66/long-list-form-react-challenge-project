@@ -5,7 +5,6 @@ import {
   useEffect,
   useMemo,
   useCallback,
-  useRef,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import data from '../data/initialUsersData.json';
@@ -27,9 +26,8 @@ export const ContextProvider = ({ children }) => {
   });
   const [usersData, setUsersData] = useState([]);
   const [errors, setErrors] = useState({});
-  const errorsRef = useRef({});
   const [loading, setLoading] = useState(false);
-  // console.log(errors);
+
   const addUser = () =>
     setUsersData((prevUsersList) => [{ id: uuidv4() }, ...prevUsersList]);
 
@@ -38,27 +36,26 @@ export const ContextProvider = ({ children }) => {
       prevUsersList.map((user) => (user.id !== updatedUser.id ? user : updatedUser))
     );
 
-    errorsRef.current[updatedUser.id] = {
-      ...errorsRef.current[updatedUser.id],
-      [fieldName]: status,
-    };
-
-    // errors[updatedUser.id] = {
-    //   ...errors[updatedUser.id],
-    //   [fieldName]: status,
-    // };
-
-    setErrors({
-      ...errorsRef.current,
+    setErrors((prevErrors) => {
+      prevErrors[updatedUser.id] = {
+        ...prevErrors[updatedUser.id],
+        [fieldName]: status,
+      };
+      return {
+        ...prevErrors,
+      };
     });
   }, []);
 
   const deleteUser = useCallback((user) => {
     setUsersData((prevUsersList) => prevUsersList.filter(({ id }) => user.id !== id));
 
-    errorsRef.current[user.id] = {};
-    setErrors({
-      ...errorsRef.current,
+    setErrors((prevErrors) => {
+      prevErrors[user.id] = {};
+
+      return {
+        ...prevErrors,
+      };
     });
   }, []);
 
